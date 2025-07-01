@@ -1,0 +1,61 @@
+﻿@page "/students"
+@using global::StudentForm.Model
+@inject HttpClient Http
+
+<h3>Registered Students</h3>
+
+@if (students == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3 class="my-4 text-center">Registered Students</h3>
+
+    @if (students == null || students.Count == 0)
+    {
+        <div class="text-center text-muted">No students found.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Qualifications</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in students)
+                {
+                    <tr>
+                        <td>@s.FirstName @s.LastName</td>
+                        <td>@s.Email</td>
+                        <td>@s.PhoneNumber</td>
+                        <td>
+                            <ul class="mb-0 ps-3">
+                                @foreach (var q in s.Qualifications)
+                                {
+                                    <li>@q.CourseName - @q.University - @q.Percentage% (@q.YearOfPassing)</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+ 
+
+@code {
+    private List<StudentRegistrationDto> students = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        students = await Http.GetFromJsonAsync<List<StudentRegistrationDto>>("api/student/all");
+    }
+}
+ 

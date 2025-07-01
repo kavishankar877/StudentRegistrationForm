@@ -1,0 +1,31 @@
+﻿@page "/login"
+@using global::StudentForm.Model
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <InputText @bind-Value="loginModel.Username" placeholder="Username" />
+    <InputText @bind-Value="loginModel.Password" placeholder="Password" />
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    LoginDto loginModel = new();
+
+    async Task HandleLogin()
+    {
+        var res = await Http.PostAsJsonAsync("api/student/login", loginModel);
+        if (res.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Login successful!");
+            Nav.NavigateTo("/students");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Invalid credentials.");
+        }
+    }
+}

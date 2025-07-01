@@ -1,0 +1,108 @@
+﻿@page "/register" 
+@using global::StudentForm.Model
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<h3 class="text-center my-4">Student Registration</h3>
+
+<EditForm Model="@student" OnValidSubmit="@HandleRegister" class="container border p-4 shadow rounded bg-light">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+ 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>First Name</label>
+            <InputText @bind-Value="student.FirstName" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Last Name</label>
+            <InputText @bind-Value="student.LastName" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Age</label>
+            <InputNumber @bind-Value="student.Age" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Date of Birth</label>
+            <InputDate @bind-Value="student.DOB" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Gender</label>
+            <InputText @bind-Value="student.Gender" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Email</label>
+            <InputText @bind-Value="student.Email" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Phone Number</label>
+            <InputText @bind-Value="student.PhoneNumber" class="form-control" />
+        </div>
+    </div>
+
+  
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Username</label>
+            <InputText @bind-Value="student.Username" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Password</label>
+            <InputText @bind-Value="student.Password" class="form-control" type="password" />
+        </div>
+    </div>
+
+   
+    <h4 class="mt-4">Qualification Details</h4>
+    @foreach (var q in student.Qualifications)
+    {
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Course Name</label>
+                <InputText @bind-Value="q.CourseName" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label>University</label>
+                <InputText @bind-Value="q.University" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label>Year</label>
+                <InputNumber @bind-Value="q.YearOfPassing" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label>Percentage</label>
+                <InputNumber @bind-Value="q.Percentage" class="form-control" />
+            </div>
+        </div>
+    }
+
+    <button type="button" @onclick="AddQualification" class="btn btn-secondary mb-3"> Add Qualification</button><br />
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    StudentRegistrationDto student = new();
+
+    void AddQualification()
+    {
+        student.Qualifications.Add(new QualificationDto());
+    }
+
+    async Task HandleRegister()
+    {
+        var res = await Http.PostAsJsonAsync("api/student/register", student);
+        if (res.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Registered successfully!");
+            Nav.NavigateTo("/login");
+        }
+    }
+}
