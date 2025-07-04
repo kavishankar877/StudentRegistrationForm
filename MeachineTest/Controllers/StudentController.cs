@@ -5,6 +5,7 @@ using MeachineTest.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace MeachineTest.Controllers
 {
@@ -50,9 +51,9 @@ namespace MeachineTest.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var students = _context.Students.Include(s => s.Qualifications).ToList();
+            var students = await _context.Students.Include(s => s.Qualifications).ToListAsync();
             return Ok(students);
         }
 
